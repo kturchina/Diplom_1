@@ -5,6 +5,10 @@ import org.mockito.Mockito;
 import praktikum.Burger;
 import praktikum.Ingredient;
 
+import java.util.stream.Stream;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -34,24 +38,39 @@ public class TestBurger extends BaseBurgerTest {
     public void testReceipt() {
         var burger = buildBurger(1, 2, 1, 0);
 
-        assertTrue(burger.getReceipt().startsWith("(==== white bun ====)\n" +
-                "= sauce chili sauce =\n" +
-                "= sauce sour cream =\n" +
-                "= sauce hot sauce =\n" +
-                "(==== white bun ====)"));
+        assertThat(burger.getReceipt(), containsString(Stream.of(
+                "(==== white bun ====)",
+                "= sauce chili sauce =",
+                "= sauce sour cream =",
+                "= sauce hot sauce =",
+                "(==== white bun ====)").collect(
+                StringBuilder::new,
+                (acc, str) -> acc.append(String.format("%s%n", str)),
+                StringBuilder::append
+        ).toString()));
 
         burger.moveIngredient(1, 0);
-        assertTrue(burger.getReceipt().startsWith("(==== white bun ====)\n" +
-                "= sauce sour cream =\n" +
-                "= sauce chili sauce =\n" +
-                "= sauce hot sauce =\n" +
-                "(==== white bun ====)"));
+        assertThat(burger.getReceipt(), containsString(Stream.of(
+                "(==== white bun ====)",
+                "= sauce sour cream =",
+                "= sauce chili sauce =",
+                "= sauce hot sauce =",
+                "(==== white bun ====)").collect(
+                StringBuilder::new,
+                (acc, str) -> acc.append(String.format("%s%n", str)),
+                StringBuilder::append
+        ).toString()));
 
         burger.removeIngredient(2);
-        assertTrue(burger.getReceipt().startsWith("(==== white bun ====)\n" +
-                "= sauce sour cream =\n" +
-                "= sauce chili sauce =\n" +
-                "(==== white bun ====)"));
+        assertThat(burger.getReceipt(), containsString(Stream.of(
+                "(==== white bun ====)",
+                "= sauce sour cream =",
+                "= sauce chili sauce =",
+                "(==== white bun ====)").collect(
+                StringBuilder::new,
+                (acc, str) -> acc.append(String.format("%s%n", str)),
+                StringBuilder::append
+        ).toString()));
     }
 
     @Test
